@@ -1,0 +1,23 @@
+# Python virtual environment
+.venv/
+venv/
+__pycache__/
+*.pyc
+
+# Local environment files
+.env
+*.db
+
+# IDE configs
+.vscode/
+.idea/
+
+# Logs and caches
+*.log
+.cache/
+
+# Frontend (Next.js)
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+frontend/.pnpm-store/
