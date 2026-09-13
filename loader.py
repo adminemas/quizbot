@@ -9,9 +9,15 @@ load_dotenv()
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 ADMIN_IDS = [aid.strip() for aid in os.getenv("ADMIN_IDS", "").split(",") if aid.strip()]
 CHANNEL_ID = os.getenv("CHANNEL_ID")
-WEBAPP_URL = os.getenv("WEBAPP_URL")
-if WEBAPP_URL and not WEBAPP_URL.startswith("https://"):
-    WEBAPP_URL = "https://" + WEBAPP_URL
+raw_webapp = (os.getenv("WEBAPP_URL") or "").strip().strip('"').strip("'")
+if raw_webapp:
+    if raw_webapp.startswith("http://"):
+        raw_webapp = "https://" + raw_webapp[7:]
+    elif not raw_webapp.startswith("https://"):
+        raw_webapp = "https://" + raw_webapp
+    WEBAPP_URL = raw_webapp.rstrip("/")
+else:
+    WEBAPP_URL = None
 DATABASE_URL = os.getenv("DATABASE_URL")
 
 if not BOT_TOKEN:

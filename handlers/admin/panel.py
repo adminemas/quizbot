@@ -40,9 +40,16 @@ async def process_admin_password(message: types.Message, state: FSMContext):
 
     if message.text and message.text.strip() == admin_pass:
         kb = InlineKeyboardBuilder()
-        web_url = WEBAPP_URL or "https://bilmli-bot-production.up.railway.app"
-        admin_url = f"{web_url}/admin"
-        kb.button(text="🔧 Admin Panelni Ochish", web_app=WebAppInfo(url=admin_url))
+        from keyboards.default_kb import is_valid_https_url
+        web_url = WEBAPP_URL
+        if web_url and is_valid_https_url(web_url):
+            admin_url = f"{web_url}/admin"
+            if message.chat.type == "private":
+                kb.button(text="🔧 Admin Panelni Ochish", web_app=WebAppInfo(url=admin_url))
+            else:
+                kb.button(text="🔧 Admin Panelni Ochish", url=admin_url)
+        else:
+            kb.button(text="📚 Fanlar ro'yxati", callback_data="show_subjects")
         
         await message.answer("✅ Admin panelga kirish ruxsat etildi.", reply_markup=kb.as_markup())
         logger.info(f"Admin panelga kirildi: {message.from_user.id}")

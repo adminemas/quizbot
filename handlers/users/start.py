@@ -1,6 +1,6 @@
 from aiogram import Router, types, F
 from aiogram.filters import Command
-from loader import ADMIN_IDS
+from loader import ADMIN_IDS, logger
 from keyboards.default_kb import get_start_kb
 from database import get_connection
 
@@ -24,7 +24,15 @@ async def cmd_start(message: types.Message):
         "/quiztez - tezkor \n\n"
         "Fanlardan birini tanlash uchun ustiga bosing 👆"
     )
-    await message.answer(text, reply_markup=get_start_kb(), parse_mode="HTML")
+    is_private = (message.chat.type == "private")
+    try:
+        await message.answer(text, reply_markup=get_start_kb(is_private=is_private), parse_mode="HTML")
+    except Exception as e:
+        logger.error(f"Error in cmd_start answer: {e}")
+        from aiogram.utils.keyboard import InlineKeyboardBuilder
+        fallback_kb = InlineKeyboardBuilder()
+        fallback_kb.button(text="📚 Fanlar ro'yxati", callback_data="show_subjects")
+        await message.answer(text, reply_markup=fallback_kb.as_markup(), parse_mode="HTML")
 
 @router.message(Command("royhat"))
 async def cmd_royhat(message: types.Message):
